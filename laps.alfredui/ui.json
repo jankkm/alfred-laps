@@ -1,0 +1,40 @@
+{
+  "bundleid": "jankkm.alfred-laps.ui",
+  "iconpath": "../icon.png",
+  "log": { "level": "error", "internal": true },
+  "variablesconfig": {
+    "laps_query":     { "src": "args[0]", "scriptenv": true },
+
+    "laps_domain":    { "src": "variable", "scriptenv": true },
+    "laps_user":      { "src": "variable", "scriptenv": true },
+    "laps_dc":        { "src": "variable", "scriptenv": true },
+    "laps_base":      { "src": "variable", "scriptenv": true },
+    "laps_cafile":    { "src": "variable", "scriptenv": true },
+    "laps_starttls":  { "src": "variable", "scriptenv": true },
+    "laps_insecure":  { "src": "variable", "scriptenv": true },
+    "laps_autoclear": { "src": "variable", "scriptenv": true },
+    "alfred_workflow_bundleid": { "src": "variable", "scriptenv": true },
+
+    "laps_recent":    { "default": "", "persist": true, "scriptenv": true },
+    "laps_last":      { "default": "", "scriptenv": true },
+    "laps_sel_kind":  { "default": "", "scriptenv": true },
+    "laps_sel_name":  { "default": "", "scriptenv": true },
+    "laps_sel_pw":    { "default": "", "scriptenv": true },
+    "laps_newpw":     { "default": "", "scriptenv": true }
+  },
+  "window": {
+    "id": "lapsWindow",
+    "title": "LAPS",
+    "root": {
+      "type": "view",
+      "layout": "border",
+      "events": "{file:components/window_events.json}",
+      "shortcuts": "{file:components/shortcuts.json}",
+      "components": [
+        "{file:components/header.json}",
+        "{file:components/results.json}",
+        "{file:components/footer.json}"
+      ]
+    }
+  }
+}

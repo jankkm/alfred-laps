@@ -1,0 +1,41 @@
+{
+  "constraints": { "region": "bottom" },
+  "type": "view",
+  "layout": "border",
+  "padding": 10,
+  "spacing": 12,
+  "background": { "dark": "#00000033", "light": "#0000000a" },
+  "components": [
+    {
+      "constraints": { "region": "left", "position": "centre" },
+      "type": "view",
+      "layout": "inline",
+      "spacing": 6,
+      "components": [
+        {
+          "constraints": { "position": "centre", "size": 14 },
+          "id": "statusIcon",
+          "type": "imageview",
+          "image": { "type": "symbol", "src": "circle.fill" },
+          "contenttintcolour": "tertiaryLabelColor"
+        },
+        {
+          "constraints": { "position": "centre" },
+          "id": "statusLabel",
+          "type": "label",
+          "text": "",
+          "colour": "secondaryLabelColor",
+          "font": { "size": 12 }
+        }
+      ]
+    },
+    {
+      "constraints": { "region": "right", "position": "centre" },
+      "id": "hintLabel",
+      "type": "label",
+      "text": "↩ Copy   ⌘↩ Paste   ⌘T Type   ⌘L Large Type   ⌘R Refresh",
+      "colour": "tertiaryLabelColor",
+      "font": { "size": 11 }
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Downloaded and lipo'd by the release workflow
+/laps-cli
+
+# Per-user Alfred configuration (domain, user, …) — never commit
+prefs.plist
+
+*.alfredworkflow
+.DS_Store
+.vscode/

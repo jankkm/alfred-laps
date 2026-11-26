@@ -1,0 +1,535 @@
+#!/usr/bin/osascript -l JavaScript
+// Alfred LAPS — Alfred UI controller.
+// Every command prints JSON actions (update / variables / sheet / finish) for Alfred UI.
+// Secrets: the AD password lives only in the macOS Keychain and is handed to laps-cli via env.
+
+ObjC.import("Foundation")
+
+const KEYCHAIN_SERVICE = "alfred-laps"
+const TEST_COMPUTER = "alfred-laps-connection-test"
+const MAX_RECENT = 8
+
+// ───────────────────────── helpers ─────────────────────────
+
+function env(name) {
+  const v = $.NSProcessInfo.processInfo.environment.objectForKey(name)
+  return v.isNil() ? "" : v.js
+}
+
+function truthy(v) {
+  return ["1", "true", "yes", "on"].includes(String(v).trim().toLowerCase())
+}
+
+function nsString(data) {
+  return $.NSString.alloc.initWithDataEncoding(data, $.NSUTF8StringEncoding).js || ""
+}
+
+function scriptDir() {
+  const args = ObjC.deepUnwrap($.NSProcessInfo.processInfo.arguments)
+  const self = args.find(a => /\/scripts\/laps$/.test(a)) || ""
+  return $(self).stringByDeletingLastPathComponent.js
+}
+
+// Run a binary without a shell. Secrets go in `extraEnv` / `input`, never argv.
+function exec(path, args, extraEnv = {}, input = null) {
+  const task = $.NSTask.alloc.init
+  task.executableURL = $.NSURL.fileURLWithPath(path)
+  task.arguments = $(args)
+
+  const environment = $.NSMutableDictionary.dictionaryWithDictionary($.NSProcessInfo.processInfo.environment)
+  for (const key of ["LAPS_PASSWORD", "LAPS_DOMAIN", "LAPS_USER", "LAPS_DC", "LAPS_BASE_DN", "LAPS_STARTTLS", "LAPS_CA_FILE", "LAPS_INSECURE", "laps_newpw", "laps_sel_pw"])
+    environment.removeObjectForKey(key)
+  for (const [key, value] of Object.entries(extraEnv))
+    environment.setObjectForKey($(String(value)), $(key))
+  task.environment = environment
+
+  const stdout = $.NSPipe.pipe, stderr = $.NSPipe.pipe, stdin = $.NSPipe.pipe
+  task.standardOutput = stdout
+  task.standardError = stderr
+  task.standardInput = stdin
+
+  if (!task.launchAndReturnError(null)) return { code: -1, out: "", err: `Could not launch ${path}` }
+  if (input !== null) stdin.fileHandleForWriting.writeData($(input).dataUsingEncoding($.NSUTF8StringEncoding))
+  stdin.fileHandleForWriting.closeFile
+
+  const out = nsString(stdout.fileHandleForReading.readDataToEndOfFile)
+  const err = nsString(stderr.fileHandleForReading.readDataToEndOfFile)
+  task.waitUntilExit
+  return { code: task.terminationStatus, out, err }
+}
+
+// ───────────────────────── config / keychain ─────────────────────────
+
+function config() {
+  const domain = env("laps_domain").trim()
+  const user = env("laps_user").trim()
+  return {
+    domain, user,
+    dc: env("laps_dc").trim(),
+    base: env("laps_base").trim(),
+    cafile: env("laps_cafile").trim(),
+    starttls: truthy(env("laps_starttls")),
+    insecure: truthy(env("laps_insecure")),
+    autoclear: parseInt(env("laps_autoclear"), 10) || 0,
+    configured: Boolean(domain && user),
+    account: (/[@\\]/.test(user) ? user : `${user}@${domain}`).toLowerCase(),
+    display: /[@\\]/.test(user) ? user : `${user}@${domain}`,
+  }
+}
+
+function keychainHas(cfg) {
+  return exec("/usr/bin/security", ["find-generic-password", "-s", KEYCHAIN_SERVICE, "-a", cfg.account]).code === 0
+}
+
+function keychainGet(cfg) {
+  const r = exec("/usr/bin/security", ["find-generic-password", "-s", KEYCHAIN_SERVICE, "-a", cfg.account, "-w"])
+  return r.code === 0 ? r.out.replace(/\n$/, "") : ""
+}
+
+function keychainSet(cfg, password) {
+  // Feed the command through `security -i` on stdin, hex-encoded, so the secret never appears in argv.
+  const hex = Array.from(unescape(encodeURIComponent(password)), c => c.charCodeAt(0).toString(16).padStart(2, "0")).join("")
+  const quote = s => `"${s.replace(/(["\\])/g, "\\$1")}"`
+  const cmd = `add-generic-password -U -s ${KEYCHAIN_SERVICE} -a ${quote(cfg.account)} -l ${quote("Alfred LAPS (" + cfg.display + ")")} -j ${quote("Active Directory password used by the Alfred LAPS workflow")} -X ${hex}\n`
+  const r = exec("/usr/bin/security", ["-i"], {}, cmd)
+  return r.code === 0 && !/error/i.test(r.err + r.out)
+}
+
+function keychainDelete(cfg) {
+  return exec("/usr/bin/security", ["delete-generic-password", "-s", KEYCHAIN_SERVICE, "-a", cfg.account]).code === 0
+}
+
+// ───────────────────────── laps-cli ─────────────────────────
+
+function cliPath() {
+  return `${scriptDir()}/../../laps-cli`
+}
+
+function runLaps(cfg, password, names, timeout = "10s") {
+  const args = ["--json", "--timeout", timeout]
+  if (cfg.dc) args.push("--dc", cfg.dc)
+  if (cfg.base) args.push("--base", cfg.base)
+  if (cfg.cafile) args.push("--ca-file", cfg.cafile)
+  if (cfg.starttls) args.push("--starttls")
+  if (cfg.insecure) args.push("--insecure")
+  args.push("--", ...names)
+
+  const r = exec(cliPath(), args, { LAPS_DOMAIN: cfg.domain, LAPS_USER: cfg.user, LAPS_PASSWORD: password })
+  let entries = null
+  try { entries = JSON.parse(r.out) } catch (e) { entries = null }
+  const firstError = (Array.isArray(entries) && entries.find(e => e.error) || {}).error
+  const message = firstError || r.err.replace(/^laps-cli:\s*/gm, "").trim() || `laps-cli exited with status ${r.code}`
+  return { code: r.code, entries: Array.isArray(entries) ? entries : [], message }
+}
+
+function classifyError(msg) {
+  const m = String(msg || "")
+  if (/Result Code 49|Invalid Credentials|data 52e|data 775|data 532|data 533/i.test(m)) return "auth"
+  if (/Network Error|no such host|timeout|timed out|connection refused|i\/o timeout|unreachable/i.test(m)) return "network"
+  if (/certificate|x509|tls/i.test(m)) return "tls"
+  return "other"
+}
+
+function friendlyError(msg, cfg) {
+  const m = String(msg || "")
+  switch (classifyError(m)) {
+    case "auth": return `Wrong password for ${cfg.display}, or the account is locked`
+    case "network": return `Can’t reach ${cfg.dc || cfg.domain}. Are you on the VPN?`
+    case "tls": return "TLS certificate not trusted. Set a CA file in Configure Workflow"
+  }
+  if (/not found|no such object|no computer/i.test(m)) return "Computer not found in Active Directory"
+  if (/insufficient|access|denied|permission/i.test(m)) return "No permission to read this computer’s LAPS password"
+  return m.split("\n")[0]
+}
+
+// ───────────────────────── formatting ─────────────────────────
+
+function parseNames(text) {
+  return String(text || "").split(/[\s,;]+/).map(s => s.trim()).filter(Boolean)
+}
+
+function normalise(text) {
+  return parseNames(text).map(s => s.toLowerCase()).join(",")
+}
+
+function relative(value, future) {
+  if (value === undefined || value === null || value === "") return ""
+  const date = typeof value === "number" ? new Date(value < 1e12 ? value * 1000 : value) : new Date(value)
+  if (isNaN(date)) return String(value)
+  const diff = date.getTime() - Date.now()
+  const abs = Math.abs(diff)
+  const units = [["day", 86400000], ["hour", 3600000], ["minute", 60000]]
+  let phrase = "just now"
+  for (const [unit, ms] of units) {
+    if (abs >= ms) { const n = Math.round(abs / ms); phrase = `${n} ${unit}${n === 1 ? "" : "s"}`; break }
+  }
+  if (phrase === "just now") return phrase
+  return diff >= 0 ? `in ${phrase}` : `${phrase} ago`
+}
+
+function daysUntil(value) {
+  const date = new Date(value)
+  return isNaN(date) ? null : (date.getTime() - Date.now()) / 86400000
+}
+
+function sourceLabel(source) {
+  return ({ encrypted: "Windows LAPS · encrypted", cleartext: "Windows LAPS", legacy: "Legacy LAPS" })[String(source || "").toLowerCase()] || (source ? String(source) : "")
+}
+
+function resultRow(entry, query) {
+  const name = entry.computer || ""
+  if (entry.error || !entry.password) {
+    return {
+      uid: `err:${name.toLowerCase()}`, kind: "error", name, password: "",
+      match: `${query} ${name}`,
+      "cellIcon.image.src": "exclamationmark.triangle.fill",
+      "cellIcon.contenttintcolour": "systemOrangeColor",
+      "cellName.text": name,
+      "cellDetail.text": friendlyError(entry.error || "No LAPS password stored for this computer", {}),
+      "cellPassword.text": "",
+    }
+  }
+
+  const details = []
+  if (entry.account) details.push(entry.account)
+  if (entry.source) details.push(sourceLabel(entry.source))
+  const days = entry.expiry ? daysUntil(entry.expiry) : null
+  if (entry.expiry) details.push(days !== null && days < 0 ? `expired ${relative(entry.expiry).replace(/ ago$/, "")} ago` : `rotates ${relative(entry.expiry)}`)
+  if (entry.updated) details.push(`set ${relative(entry.updated)}`)
+
+  const icon = days !== null && days < 1 ? ["clock.badge.exclamationmark.fill", "systemOrangeColor"] : ["key.horizontal.fill", "systemGreenColor"]
+  return {
+    uid: `ok:${name.toLowerCase()}`, kind: "result", name, password: entry.password,
+    match: `${query} ${name}`,
+    "cellIcon.image.src": icon[0],
+    "cellIcon.contenttintcolour": icon[1],
+    "cellName.text": name,
+    "cellDetail.text": details.join("  ·  "),
+    "cellPassword.text": entry.password,
+  }
+}
+
+function recentRows(exclude = []) {
+  const skip = new Set(exclude.map(s => s.toLowerCase()))
+  return parseNames(env("laps_recent").replace(/\n/g, ","))
+    .filter(n => !skip.has(n.toLowerCase()))
+    .map(name => ({
+      uid: `recent:${name.toLowerCase()}`, kind: "recent", name, password: "",
+      match: "",
+      "cellIcon.image.src": "clock.arrow.circlepath",
+      "cellIcon.contenttintcolour": "secondaryLabelColor",
+      "cellName.text": name,
+      "cellDetail.text": "Recent  ·  ↩ to look up again",
+      "cellPassword.text": "",
+    }))
+}
+
+function setupRow(title, detail) {
+  return {
+    uid: "setup", kind: "setup", name: "", password: "", match: "",
+    "cellIcon.image.src": "gearshape.fill",
+    "cellIcon.contenttintcolour": "systemBlueColor",
+    "cellName.text": title,
+    "cellDetail.text": detail,
+    "cellPassword.text": "",
+  }
+}
+
+function addRecent(names) {
+  const merged = [...names, ...parseNames(env("laps_recent"))]
+  const seen = new Set()
+  return merged.filter(n => { const k = n.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true }).slice(0, MAX_RECENT).join(",")
+}
+
+// ───────────────────────── UI building blocks ─────────────────────────
+
+const FILTER = { type: "basic", args: "match", match: "{value:searchField.text}", matchmode: "wordmatchanyorder" }
+
+function ui() { return { variables: {}, update: { relayout: true, ids: {} } } }
+
+function setStatus(o, text, tone = "neutral") {
+  const tones = {
+    neutral: ["circle.fill", "tertiaryLabelColor"],
+    busy: ["ellipsis.circle.fill", "systemBlueColor"],
+    ok: ["checkmark.circle.fill", "systemGreenColor"],
+    warn: ["exclamationmark.circle.fill", "systemOrangeColor"],
+    error: ["xmark.circle.fill", "systemRedColor"],
+  }
+  const [symbol, colour] = tones[tone] || tones.neutral
+  o.update.ids.statusIcon = { image: { type: "symbol", src: symbol }, contenttintcolour: colour }
+  o.update.ids.statusLabel = { text }
+  o.update.ids.headerIcon = tone === "busy"
+    ? { image: { type: "symbol", src: "hourglass" }, contenttintcolour: "systemBlueColor" }
+    : { image: { type: "symbol", src: "key.horizontal.fill" }, contenttintcolour: "systemBlueColor" }
+  return o
+}
+
+function setRows(o, rows, select) {
+  // Only filter lists of lookups/recents; setup and connection rows must stay visible whatever is typed.
+  const filterable = rows.every(r => r.kind === "result" || r.kind === "recent" || r.uid.startsWith("err:"))
+  const data = { src: rows, filter: filterable ? FILTER : Object.assign({}, FILTER, { match: "" }) }
+  o.update.ids.results = { data }
+  if (select) o.update.ids.results.select = select
+  return o
+}
+
+function readyState(cfg) {
+  if (!cfg.configured) return "unconfigured"
+  if (!keychainHas(cfg)) return "nopassword"
+  return "ready"
+}
+
+function idleStatus(o, cfg, state) {
+  if (state === "unconfigured") return setStatus(o, "Domain and user are not set. Press ↩ to set them up", "warn")
+  if (state === "nopassword") return setStatus(o, `No password saved for ${cfg.display}. Press ↩ to add it`, "warn")
+  return setStatus(o, `${cfg.display}${cfg.dc ? "  →  " + cfg.dc : ""}`, "neutral")
+}
+
+function idleRows(cfg, state, exclude = []) {
+  if (state === "unconfigured") return [setupRow("Set up Alfred LAPS", "Enter your domain and user in Configure Workflow")]
+  if (state === "nopassword") return [setupRow("Add your Active Directory password", `Saved securely in your Keychain for ${cfg.display}`), ...recentRows(exclude)]
+  return recentRows(exclude)
+}
+
+// ───────────────────────── setup sheet ─────────────────────────
+
+function sheet(cfg, message = "", tone = "secondary") {
+  const colour = { secondary: "secondaryLabelColor", error: "systemRedColor", ok: "systemGreenColor" }[tone] || "secondaryLabelColor"
+  const saved = cfg.configured && keychainHas(cfg)
+  const saveAction = [
+    { type: "json", variables: { laps_newpw: "{value:setupPassword.text}" }, src: { update: { ids: { setupMessage: { text: "Checking your password with Active Directory…", colour: "secondaryLabelColor" } } } } },
+    { type: "script", src: "scripts/laps", args: ["savepw", "{value:searchField.text}"], async: true },
+  ]
+
+  const body = cfg.configured
+    ? [
+        { type: "label", text: "Domain", colour: "secondaryLabelColor", font: { size: 11, weight: "medium" } },
+        { type: "label", text: cfg.domain + (cfg.dc ? `  (DC ${cfg.dc})` : ""), selectable: true },
+        { type: "label", text: "User", colour: "secondaryLabelColor", font: { size: 11, weight: "medium" } },
+        { type: "label", text: cfg.display, selectable: true },
+        { type: "label", text: saved ? "New password" : "Password", colour: "secondaryLabelColor", font: { size: 11, weight: "medium" } },
+        {
+          id: "setupPassword", type: "passwordfield", focus: true,
+          textinsets: { horizontal: 8, vertical: 6 },
+          events: [{ triggers: "actioned", action: saveAction }],
+        },
+      ]
+    : [
+        { type: "label", text: "First, set your Active Directory domain and user name in this workflow’s configuration.", linebreak: "wordwrap" },
+      ]
+
+  const buttons = [
+    { type: "button", text: "Cancel", events: [{ triggers: "actioned", action: { type: "json", src: { sheet: { close: "setup" } } } }] },
+  ]
+  if (saved) buttons.unshift({
+    type: "button", text: "Forget Password",
+    events: [{
+      triggers: "actioned",
+      confirm: { message: "Remove the saved password?", informativetext: `This deletes the Keychain item for ${cfg.display}.`, confirmbuttontext: "Forget" },
+      action: { type: "script", src: "scripts/laps", args: "forget" },
+    }],
+  })
+  buttons.push(cfg.configured
+    ? { type: "button", text: "Save & Test", shortcut: "↩", events: [{ triggers: "actioned", action: saveAction }] }
+    : { type: "button", text: "Open Configuration…", shortcut: "↩", events: [{ triggers: "actioned", action: { type: "script", src: "scripts/laps", args: "configure" } }] })
+
+  return {
+    sheet: {
+      id: "setup",
+      root: {
+        type: "view", layout: "inline", direction: "vertical", padding: 24, spacing: 8,
+        constraints: { size: { width: 440 } },
+        components: [
+          {
+            type: "view", layout: "inline", spacing: 10,
+            constraints: { insets: { bottom: 8 } },
+            components: [
+              { constraints: { position: "centre", size: 30 }, type: "imageview", image: { type: "symbol", src: "lock.shield.fill" }, contenttintcolour: "systemBlueColor" },
+              {
+                type: "view", layout: "inline", direction: "vertical", spacing: 2, constraints: { position: "centre" },
+                components: [
+                  { type: "label", text: "Active Directory Credentials", font: { size: 17, weight: "semibold" } },
+                  { type: "label", text: "Your password stays in the macOS Keychain", colour: "secondaryLabelColor", font: { size: 12 } },
+                ],
+              },
+            ],
+          },
+          ...body,
+          { id: "setupMessage", type: "label", text: message, colour, linebreak: "wordwrap", font: { size: 12 } },
+          {
+            type: "view", layout: "inline", spacing: 8,
+            constraints: { position: "right", insets: { top: 8 } },
+            components: buttons,
+          },
+        ],
+      },
+    },
+  }
+}
+
+// ───────────────────────── actions ─────────────────────────
+
+function lookup(text) {
+  const cfg = config()
+  const names = parseNames(text)
+  const o = ui()
+  const state = readyState(cfg)
+  if (state !== "ready") return Object.assign(idleStatus(o, cfg, state), sheet(cfg))
+  if (!names.length) return idleStatus(o, cfg, state)
+
+  const password = keychainGet(cfg)
+  if (!password) return Object.assign(setStatus(o, "Couldn’t read your password from the Keychain", "error"), sheet(cfg, "Couldn’t read the Keychain item. Enter your password again.", "error"))
+
+  const started = Date.now()
+  const r = runLaps(cfg, password, names)
+  const query = normalise(text)
+  o.variables.laps_last = query
+  o.update.ids.searchField = { text: names.join(", ") }
+
+  if (r.code === 2 || (!r.entries.length && r.code !== 0)) {
+    const kind = classifyError(r.message)
+    const rows = [{
+      uid: "connection", kind: "error", name: "", password: "", match: "",
+      "cellIcon.image.src": kind === "auth" ? "person.crop.circle.badge.xmark" : "wifi.exclamationmark",
+      "cellIcon.contenttintcolour": "systemRedColor",
+      "cellName.text": friendlyError(r.message, cfg),
+      "cellDetail.text": r.message.split("\n")[0],
+      "cellPassword.text": "",
+    }, ...recentRows(names)]
+    setRows(o, rows, "connection")
+    setStatus(o, kind === "auth" ? "Sign-in failed" : "Lookup failed", "error")
+    if (kind === "auth") Object.assign(o, sheet(cfg, "Active Directory rejected the saved password. Enter your current password.", "error"))
+    return o
+  }
+
+  const rows = r.entries.map(e => resultRow(e, query))
+  const found = rows.filter(x => x.kind === "result")
+  const secs = ((Date.now() - started) / 1000).toFixed(1)
+  if (found.length) o.variables.laps_recent = addRecent(found.map(x => x.name))
+  setRows(o, rows, (found[0] || rows[0] || {}).uid)
+
+  if (found.length === rows.length) setStatus(o, `${found.length === 1 ? "Found 1 password" : `Found ${found.length} passwords`} in ${secs}s  ·  ${cfg.domain}`, "ok")
+  else if (found.length) setStatus(o, `Found ${found.length} of ${rows.length} passwords  ·  ${cfg.domain}`, "warn")
+  else setStatus(o, rows.length === 1 ? "No password found" : "No passwords found", "error")
+  return o
+}
+
+function finishWith(action) {
+  const kind = env("laps_sel_kind"), name = env("laps_sel_name"), password = env("laps_sel_pw")
+  if (kind === "setup") return sheet(config())
+  if (kind === "recent") return null // handled by caller
+  if (kind !== "result" || !password) {
+    return Object.assign(setStatus(ui(), "Select a computer with a password first", "warn"), { sound: { src: "Funk" } })
+  }
+  const cfg = config()
+  const notice = cfg.autoclear > 0 ? `${name}  ·  clipboard clears in ${cfg.autoclear}s` : name
+  return {
+    variables: { laps_sel_pw: "" },
+    finish: { args: password, variables: { laps_action: action, laps_computer: name, laps_notice: notice } },
+  }
+}
+
+const commands = {
+  // preload: populate the UI before it is shown
+  init() {
+    const cfg = config()
+    const state = readyState(cfg)
+    const query = env("laps_query").trim()
+    const o = ui()
+    o.update.ids.searchField = { text: query }
+    o.variables.laps_last = ""
+    setRows(o, query && state === "ready" ? recentRows(parseNames(query)) : idleRows(cfg, state), state === "ready" ? undefined : "setup")
+    if (query && state === "ready") setStatus(o, `Looking up ${parseNames(query).join(", ")}…`, "busy")
+    else idleStatus(o, cfg, state)
+    return o
+  },
+
+  // launched: kick off the lookup passed in from the keyword / universal action
+  launch() {
+    const cfg = config()
+    const state = readyState(cfg)
+    const query = env("laps_query").trim()
+    if (state !== "ready") return Object.assign(idleStatus(ui(), cfg, state), sheet(cfg))
+    return query ? lookup(query) : null
+  },
+
+  // ↩ in the search field
+  enter(text) {
+    const kind = env("laps_sel_kind")
+    const typed = normalise(text)
+    if (kind === "setup") return sheet(config())
+    if (kind === "result" && (!typed || typed === env("laps_last"))) return finishWith("copy")
+    if (!typed && kind === "recent") return lookup(env("laps_sel_name"))
+    if (typed) return lookup(text)
+    return null
+  },
+
+  copy() {
+    if (env("laps_sel_kind") === "recent") return lookup(env("laps_sel_name"))
+    return finishWith("copy")
+  },
+  paste() { return finishWith("paste") },
+  largetype() { return finishWith("largetype") },
+  type() { return finishWith("type") },
+
+  refresh() {
+    const last = env("laps_last")
+    return last ? lookup(last) : null
+  },
+
+  sheet() { return sheet(config()) },
+
+  savepw(currentText) {
+    const cfg = config()
+    const password = env("laps_newpw")
+    const done = { laps_newpw: "" }
+    if (!password) return { variables: done, update: { ids: { setupMessage: { text: "Enter your password first.", colour: "systemRedColor" } } } }
+
+    const r = runLaps(cfg, password, [TEST_COMPUTER], "8s")
+    const kind = classifyError(r.message)
+    if (r.code === 2 && kind === "auth")
+      return { variables: done, update: { ids: { setupMessage: { text: "Active Directory rejected this password. Nothing was saved.", colour: "systemRedColor" } } } }
+
+    if (!keychainSet(cfg, password))
+      return { variables: done, update: { ids: { setupMessage: { text: "Couldn’t write to your Keychain.", colour: "systemRedColor" } } } }
+
+    const reachable = r.code !== 2
+    const text = normalise(currentText) ? currentText : ""
+    const o = text && reachable ? lookup(text) : ui()
+    o.variables = Object.assign(o.variables || {}, done)
+    o.sheet = { close: "setup" }
+    if (!text || !reachable) {
+      setRows(o, idleRows(cfg, "ready"))
+      if (reachable) setStatus(o, `Password saved and verified for ${cfg.display}`, "ok")
+      else setStatus(o, `Password saved, but ${cfg.dc || cfg.domain} isn’t reachable right now`, "warn")
+    }
+    return o
+  },
+
+  forget() {
+    const cfg = config()
+    keychainDelete(cfg)
+    const o = setStatus(ui(), `Removed saved password for ${cfg.display}`, "neutral")
+    setRows(o, idleRows(cfg, "nopassword"), "setup")
+    o.sheet = { close: "setup" }
+    return o
+  },
+
+  configure() {
+    const bundle = env("alfred_workflow_bundleid") || "jankkm.alfred-laps"
+    try { Application("com.runningwithcrayons.Alfred").revealWorkflow(bundle) } catch (e) {}
+    return { sheet: { close: "setup" } }
+  },
+}
+
+function run(argv) {
+  const [command, ...rest] = argv
+  const fn = commands[command]
+  if (!fn) return JSON.stringify(setStatus(ui(), `Unknown command: ${command}`, "error"))
+  try {
+    const result = fn(...rest)
+    return result ? JSON.stringify(result) : ""
+  } catch (e) {
+    return JSON.stringify(setStatus(ui(), `Internal error: ${e.message || e}`, "error"))
+  }
+}

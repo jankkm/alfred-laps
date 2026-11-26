@@ -1,0 +1,99 @@
+{
+  "constraints": {
+    "region": "top"
+  },
+  "type": "view",
+  "layout": "border",
+  "padding": 14,
+  "spacing": 12,
+  "components": [
+    {
+      "constraints": {
+        "region": "left",
+        "position": "centre",
+        "size": 28
+      },
+      "id": "headerIcon",
+      "type": "imageview",
+      "image": {
+        "type": "symbol",
+        "src": "key.horizontal.fill"
+      },
+      "contenttintcolour": "systemBlueColor"
+    },
+    {
+      "constraints": {
+        "region": "centre",
+        "position": "centre",
+        "stretch": "horizontal"
+      },
+      "id": "searchField",
+      "type": "textfield",
+      "placeholder": "Computer name — several separated by commas",
+      "bordered": false,
+      "focus": true,
+      "focusring": false,
+      "textinsets": {
+        "horizontal": 0,
+        "vertical": 4
+      },
+      "font": {
+        "size": 24,
+        "weight": "light"
+      },
+      "events": [
+        {
+          "triggers": "changed",
+          "action": {
+            "type": "function",
+            "src": "results",
+            "args": "filterdata"
+          }
+        },
+        {
+          "triggers": "actioned",
+          "action": {
+            "type": "script",
+            "src": "scripts/laps",
+            "args": [
+              "enter",
+              "{value:searchField.text}"
+            ],
+            "async": true,
+            "variables": {
+              "laps_sel_kind": "{value:results.selected.kind}",
+              "laps_sel_name": "{value:results.selected.name}",
+              "laps_sel_pw": "{value:results.selected.password}"
+            }
+          }
+        }
+      ],
+      "background": "#00000000"
+    },
+    {
+      "constraints": {
+        "region": "right",
+        "position": "centre"
+      },
+      "id": "setupButton",
+      "type": "button",
+      "bordered": false,
+      "image": {
+        "type": "symbol",
+        "src": "gearshape"
+      },
+      "contenttintcolour": "secondaryLabelColor",
+      "tooltip": "Credentials (⌘,)",
+      "events": [
+        {
+          "triggers": "actioned",
+          "action": {
+            "type": "script",
+            "src": "scripts/laps",
+            "args": "sheet"
+          }
+        }
+      ]
+    }
+  ]
+}

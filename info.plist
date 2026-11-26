@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>jankkm.alfred-laps</string>
+	<key>connections</key>
+	<dict>
+		<key>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6F449FC9-9AB4-4935-B8B1-C9E806910729</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>2B8918A0-6CB5-43B9-9716-6FD037D79CA6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>308283A6-C02D-4C6D-A3ED-60A8C5A591C3</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>6F449FC9-9AB4-4935-B8B1-C9E806910729</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>FE210CB4-F508-4939-9E54-3D870BE661E9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>46A10F2D-D3AB-47FF-9D95-EB48F85CC62B</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>793EC62F-E7B1-41E1-B71A-3352C3BB22E6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>939376A7-4ACF-4DC7-937C-DAB065C068A7</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>91A967FE-8FEC-4F8A-B6CF-1FD7AB971173</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>88791510-B019-4E07-BB99-9CC9EA8100AC</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B2312EAE-7FD4-40D5-B0A1-BC9F7E4BA0DA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>FA0C8631-4492-464C-B076-5C901E0A9838</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>793EC62F-E7B1-41E1-B71A-3352C3BB22E6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>C4B96368-6377-47FC-8CCE-27421DC9B07C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>93992D56-A6AC-43D7-BC49-F4112B406593</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A6E72DD0-4D3A-445A-AA5C-B41777E00021</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>FE210CB4-F508-4939-9E54-3D870BE661E9</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>51F00FCD-4CFE-4762-8F33-9B7AF130F551</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>C4B96368-6377-47FC-8CCE-27421DC9B07C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>jankkm</string>
+	<key>description</key>
+	<string>Request LAPS passwords from Active Directory</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Alfred LAPS</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{var:laps_notice}</string>
+				<key>title</key>
+				<string>LAPS password copied</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>51F00FCD-4CFE-4762-8F33-9B7AF130F551</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<true/>
+				<key>transient</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>FE210CB4-F508-4939-9E54-3D870BE661E9</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>keyword</key>
+				<string>{var:keyword}</string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Look up a computer’s local admin password in Active Directory</string>
+				<key>text</key>
+				<string>LAPS Password</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>308283A6-C02D-4C6D-A3ED-60A8C5A591C3</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<true/>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string># Clear the clipboard after $laps_autoclear seconds, but only if it still holds what we copied.
+[[ "${laps_autoclear:-0}" =~ ^[0-9]+$ ]] &amp;&amp; (( laps_autoclear &gt; 0 )) || exit 0
+sleep 1
+before="$(pbpaste | shasum)"
+sleep "$laps_autoclear"
+[[ "$(pbpaste | shasum)" == "$before" ]] &amp;&amp; pbcopy &lt; /dev/null
+exit 0</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>C4B96368-6377-47FC-8CCE-27421DC9B07C</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:laps_action}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>copy</string>
+						<key>outputlabel</key>
+						<string>Copy</string>
+						<key>uid</key>
+						<string>46A10F2D-D3AB-47FF-9D95-EB48F85CC62B</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:laps_action}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>paste</string>
+						<key>outputlabel</key>
+						<string>Paste</string>
+						<key>uid</key>
+						<string>939376A7-4ACF-4DC7-937C-DAB065C068A7</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:laps_action}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>largetype</string>
+						<key>outputlabel</key>
+						<string>Large Type</string>
+						<key>uid</key>
+						<string>88791510-B019-4E07-BB99-9CC9EA8100AC</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:laps_action}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>0</integer>
+						<key>matchstring</key>
+						<string>type</string>
+						<key>outputlabel</key>
+						<string>Auto-Type</string>
+						<key>uid</key>
+						<string>FA0C8631-4492-464C-B076-5C901E0A9838</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>6F449FC9-9AB4-4935-B8B1-C9E806910729</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>acceptsfiles</key>
+				<false/>
+				<key>acceptsmulti</key>
+				<integer>0</integer>
+				<key>acceptstext</key>
+				<true/>
+				<key>acceptsurls</key>
+				<false/>
+				<key>name</key>
+				<string>Get LAPS Password</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.universalaction</string>
+			<key>uid</key>
+			<string>2B8918A0-6CB5-43B9-9716-6FD037D79CA6</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>launchmode</key>
+				<integer>0</integer>
+				<key>path</key>
+				<string>laps.alfredui</string>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.alfredui</string>
+			<key>uid</key>
+			<string>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<true/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<true/>
+				<key>transient</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>793EC62F-E7B1-41E1-B71A-3352C3BB22E6</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>A6E72DD0-4D3A-445A-AA5C-B41777E00021</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alignment</key>
+				<integer>0</integer>
+				<key>backgroundcolor</key>
+				<string></string>
+				<key>fadespeed</key>
+				<integer>0</integer>
+				<key>fillmode</key>
+				<integer>0</integer>
+				<key>font</key>
+				<string></string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>largetypetext</key>
+				<string>{query}</string>
+				<key>textcolor</key>
+				<string></string>
+				<key>wrapat</key>
+				<integer>50</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.largetype</string>
+			<key>uid</key>
+			<string>91A967FE-8FEC-4F8A-B6CF-1FD7AB971173</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<false/>
+				<key>triggerid</key>
+				<string>lookup</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>93992D56-A6AC-43D7-BC49-F4112B406593</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>// Auto-type the password into the frontmost app (needs Accessibility access for Alfred).
+ObjC.import("AppKit")
+
+function env(name) {
+  const v = $.NSProcessInfo.processInfo.environment.objectForKey(name)
+  return v.isNil() ? "" : v.js
+}
+
+function run(argv) {
+  const password = argv[0] || ""
+  if (!password) return
+
+  // Wait for the shortcut's modifier keys (⇧⌃⌥⌘) to be released, then for Alfred to hide.
+  for (let i = 0; i &lt; 60 &amp;&amp; ($.NSEvent.modifierFlags &amp; 0x1E0000); i++) delay(0.05)
+  delay(0.3)
+
+  const ms = parseInt(env("laps_typedelay"), 10)
+  const pause = (isNaN(ms) ? 20 : ms) / 1000
+  const events = Application("System Events")
+  for (const ch of password) {
+    events.keystroke(ch)
+    if (pause) delay(pause)
+  }
+  if (["1", "true"].includes(env("laps_typereturn"))) events.keyCode(36)
+}</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>7</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B2312EAE-7FD4-40D5-B0A1-BC9F7E4BA0DA</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>## Alfred LAPS
+
+Look up Windows LAPS and legacy Microsoft LAPS passwords in Active Directory without leaving Alfred. The workflow uses the bundled [laps-cli](https://github.com/jankkm/laps-cli).
+
+### Setup
+
+1. Set your **AD Domain** and **User** in *Configure Workflow…*.
+2. Type `laps`. On first use, Alfred asks for your AD password, tests it against Active Directory, and saves it in your **macOS Keychain** (item "Alfred LAPS"). The password is never written to the workflow configuration or passed on a command line.
+
+### Usage
+
+- `laps PC123` looks up a computer. Separate several names with commas or spaces: `laps PC1, PC2, PC3`.
+- Select a hostname anywhere, then use the Universal Action **Get LAPS Password**.
+- Leave the field empty to see your recent lookups. Recent lookups store names only, never passwords.
+
+| Key | Action |
+|---|---|
+| ↩ | Look up the typed name. Once results are shown, ↩ copies the selected password |
+| ⌘↩ | Paste the password into the frontmost app |
+| ⌘T | Auto-type the password into the frontmost app, for VM consoles, RDP or KVM where paste doesn't work |
+| ⌘L / ⌥↩ | Show in Large Type |
+| ⌘R | Look up again |
+| ⌘, | Change or forget your saved AD password |
+| ↑ ↓ | Move between results |
+
+Copied passwords are marked *transient*, so they never appear in Alfred's Clipboard History. They can also be cleared from the clipboard automatically (see *Clear Clipboard*).
+
+### Result details
+
+Each result shows the managed account, the LAPS flavour (Windows LAPS encrypted or cleartext, or legacy LAPS), when the password rotates, and when it was last set. Passwords expiring within a day are flagged in orange.
+
+### Auto-type
+
+⌘T types the password keystroke by keystroke into whatever app is in front once Alfred closes. Alfred needs **Accessibility** permission (System Settings › Privacy &amp; Security › Accessibility). You can set the typing speed, and whether to press Return afterwards, in *Configure Workflow*.
+</string>
+	<key>uidata</key>
+	<dict>
+		<key>0C12A874-4F6C-4D45-94A1-B2CB63481EA9</key>
+		<dict>
+			<key>note</key>
+			<string>Alfred UI — laps.alfredui/ui.json</string>
+			<key>xpos</key>
+			<real>250</real>
+			<key>ypos</key>
+			<real>180</real>
+		</dict>
+		<key>2B8918A0-6CB5-43B9-9716-6FD037D79CA6</key>
+		<dict>
+			<key>xpos</key>
+			<real>30</real>
+			<key>ypos</key>
+			<real>180</real>
+		</dict>
+		<key>308283A6-C02D-4C6D-A3ED-60A8C5A591C3</key>
+		<dict>
+			<key>xpos</key>
+			<real>30</real>
+			<key>ypos</key>
+			<real>40</real>
+		</dict>
+		<key>51F00FCD-4CFE-4762-8F33-9B7AF130F551</key>
+		<dict>
+			<key>xpos</key>
+			<real>850</real>
+			<key>ypos</key>
+			<real>15</real>
+		</dict>
+		<key>6F449FC9-9AB4-4935-B8B1-C9E806910729</key>
+		<dict>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>180</real>
+		</dict>
+		<key>793EC62F-E7B1-41E1-B71A-3352C3BB22E6</key>
+		<dict>
+			<key>xpos</key>
+			<real>650</real>
+			<key>ypos</key>
+			<real>200</real>
+		</dict>
+		<key>91A967FE-8FEC-4F8A-B6CF-1FD7AB971173</key>
+		<dict>
+			<key>xpos</key>
+			<real>650</real>
+			<key>ypos</key>
+			<real>360</real>
+		</dict>
+		<key>93992D56-A6AC-43D7-BC49-F4112B406593</key>
+		<dict>
+			<key>note</key>
+			<string>External trigger "lookup" — argument: computer name(s)</string>
+			<key>xpos</key>
+			<real>30</real>
+			<key>ypos</key>
+			<real>460</real>
+		</dict>
+		<key>A6E72DD0-4D3A-445A-AA5C-B41777E00021</key>
+		<dict>
+			<key>xpos</key>
+			<real>30</real>
+			<key>ypos</key>
+			<real>320</real>
+		</dict>
+		<key>B2312EAE-7FD4-40D5-B0A1-BC9F7E4BA0DA</key>
+		<dict>
+			<key>note</key>
+			<string>Auto-type password</string>
+			<key>xpos</key>
+			<real>650</real>
+			<key>ypos</key>
+			<real>520</real>
+		</dict>
+		<key>C4B96368-6377-47FC-8CCE-27421DC9B07C</key>
+		<dict>
+			<key>note</key>
+			<string>Auto-clear clipboard</string>
+			<key>xpos</key>
+			<real>850</real>
+			<key>ypos</key>
+			<real>160</real>
+		</dict>
+		<key>FE210CB4-F508-4939-9E54-3D870BE661E9</key>
+		<dict>
+			<key>xpos</key>
+			<real>650</real>
+			<key>ypos</key>
+			<real>40</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>laps</string>
+				<key>placeholder</key>
+				<string>laps</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>keyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>corp.example.com</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Your Active Directory domain, e.g. corp.example.com</string>
+			<key>label</key>
+			<string>AD Domain</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>laps_domain</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>jdoe</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>jdoe, jdoe@corp.example.com or CORP\jdoe. The password is stored in your Keychain on first use.</string>
+			<key>label</key>
+			<string>User</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>laps_user</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>dc01.corp.example.com</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Optional. Defaults to the domain name.</string>
+			<key>label</key>
+			<string>Domain Controller</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>laps_dc</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>placeholder</key>
+				<string>OU=Computers,DC=corp,DC=example,DC=com</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Optional LDAP search base DN. Derived from the domain by default.</string>
+			<key>label</key>
+			<string>Search Base</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>laps_base</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>filtermode</key>
+				<integer>0</integer>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional PEM/DER file to trust for LDAPS, e.g. your internal root CA.</string>
+			<key>label</key>
+			<string>CA Certificate</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>laps_cafile</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Use LDAP + StartTLS on port 389 instead of LDAPS</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>StartTLS</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>laps_starttls</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Skip TLS certificate verification (testing only)</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Insecure</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>laps_insecure</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>60</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Never</string>
+						<string>0</string>
+					</array>
+					<array>
+						<string>After 30 seconds</string>
+						<string>30</string>
+					</array>
+					<array>
+						<string>After 1 minute</string>
+						<string>60</string>
+					</array>
+					<array>
+						<string>After 2 minutes</string>
+						<string>120</string>
+					</array>
+					<array>
+						<string>After 5 minutes</string>
+						<string>300</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Clear a copied password from the clipboard after a while.</string>
+			<key>label</key>
+			<string>Clear Clipboard</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>laps_autoclear</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>20</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Fast</string>
+						<string>0</string>
+					</array>
+					<array>
+						<string>Normal</string>
+						<string>20</string>
+					</array>
+					<array>
+						<string>Slow (VM consoles)</string>
+						<string>60</string>
+					</array>
+					<array>
+						<string>Very slow</string>
+						<string>150</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>⌘T types the password into the frontmost app. Slow down for VM consoles, RDP or KVM windows that drop keystrokes.</string>
+			<key>label</key>
+			<string>Auto-Type Speed</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>laps_typedelay</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<false/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Press Return after auto-typing</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>laps_typereturn</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/jankkm/alfred-laps</string>
+</dict>
+</plist>

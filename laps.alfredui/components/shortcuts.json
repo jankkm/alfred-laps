@@ -1,0 +1,87 @@
+[
+  {
+    "shortcut": "↑",
+    "action": {
+      "type": "function",
+      "src": "results",
+      "args": "selectup"
+    }
+  },
+  {
+    "shortcut": "↓",
+    "action": {
+      "type": "function",
+      "src": "results",
+      "args": "selectdown"
+    }
+  },
+  {
+    "shortcut": "⌘↩",
+    "action": {
+      "type": "script",
+      "src": "scripts/laps",
+      "args": "paste",
+      "variables": {
+        "laps_sel_kind": "{value:results.selected.kind}",
+        "laps_sel_name": "{value:results.selected.name}",
+        "laps_sel_pw": "{value:results.selected.password}"
+      }
+    }
+  },
+  {
+    "shortcut": "⌥↩",
+    "action": {
+      "type": "script",
+      "src": "scripts/laps",
+      "args": "largetype",
+      "variables": {
+        "laps_sel_kind": "{value:results.selected.kind}",
+        "laps_sel_name": "{value:results.selected.name}",
+        "laps_sel_pw": "{value:results.selected.password}"
+      }
+    }
+  },
+  {
+    "shortcut": "⌘L",
+    "action": {
+      "type": "script",
+      "src": "scripts/laps",
+      "args": "largetype",
+      "variables": {
+        "laps_sel_kind": "{value:results.selected.kind}",
+        "laps_sel_name": "{value:results.selected.name}",
+        "laps_sel_pw": "{value:results.selected.password}"
+      }
+    }
+  },
+  {
+    "shortcut": "⌘T",
+    "action": {
+      "type": "script",
+      "src": "scripts/laps",
+      "args": "type",
+      "variables": {
+        "laps_sel_kind": "{value:results.selected.kind}",
+        "laps_sel_name": "{value:results.selected.name}",
+        "laps_sel_pw": "{value:results.selected.password}"
+      }
+    }
+  },
+  {
+    "shortcut": "⌘R",
+    "action": {
+      "type": "script",
+      "src": "scripts/laps",
+      "args": "refresh",
+      "async": true
+    }
+  },
+  {
+    "shortcut": "⌘,",
+    "action": {
+      "type": "script",
+      "src": "scripts/laps",
+      "args": "sheet"
+    }
+  }
+]

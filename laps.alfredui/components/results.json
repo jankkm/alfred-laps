@@ -1,0 +1,121 @@
+{
+  "constraints": {
+    "region": "centre",
+    "size": {
+      "height": 300
+    }
+  },
+  "id": "results",
+  "type": "dataview",
+  "placeholder": "Type a computer name and press ↩",
+  "padding": 8,
+  "spacing": 2,
+  "behaviour": {
+    "selection": {
+      "wrap": "vertical"
+    }
+  },
+  "data": {
+    "src": []
+  },
+  "events": [
+    {
+      "triggers": [
+        "doubleclicked",
+        "actioned"
+      ],
+      "action": {
+        "type": "script",
+        "src": "scripts/laps",
+        "args": "copy",
+        "variables": {
+          "laps_sel_kind": "{value:results.selected.kind}",
+          "laps_sel_name": "{value:results.selected.name}",
+          "laps_sel_pw": "{value:results.selected.password}"
+        }
+      }
+    }
+  ],
+  "cell": {
+    "height": 56,
+    "init": {
+      "cellRoot.background": null,
+      "cellName.colour": "labelColor",
+      "cellDetail.colour": "secondaryLabelColor",
+      "cellPassword.colour": "labelColor",
+      "cellIcon.contenttintcolour": "secondaryLabelColor"
+    },
+    "selected": {
+      "cellRoot.background": "alfredSelectedResultBackgroundColor",
+      "cellName.colour": "alfredSelectedResultTextColor",
+      "cellDetail.colour": "alfredSelectedResultTextColor",
+      "cellPassword.colour": "alfredSelectedResultTextColor",
+      "cellIcon.contenttintcolour": "alfredSelectedResultTextColor"
+    },
+    "root": {
+      "id": "cellRoot",
+      "type": "view",
+      "layout": "border",
+      "padding": 10,
+      "spacing": 12,
+      "cornerradius": 8,
+      "components": [
+        {
+          "constraints": {
+            "region": "left",
+            "position": "centre",
+            "size": 22
+          },
+          "id": "cellIcon",
+          "type": "imageview",
+          "image": {
+            "type": "symbol",
+            "src": "key.horizontal"
+          }
+        },
+        {
+          "constraints": {
+            "region": "centre",
+            "position": "left",
+            "stretch": "horizontal"
+          },
+          "type": "view",
+          "layout": "inline",
+          "direction": "vertical",
+          "spacing": 2,
+          "components": [
+            {
+              "id": "cellName",
+              "type": "label",
+              "font": {
+                "size": 15,
+                "weight": "medium"
+              }
+            },
+            {
+              "id": "cellDetail",
+              "type": "label",
+              "font": {
+                "size": 11
+              },
+              "linebreak": "truncatetail"
+            }
+          ]
+        },
+        {
+          "constraints": {
+            "region": "right",
+            "position": "centre"
+          },
+          "id": "cellPassword",
+          "type": "label",
+          "font": {
+            "size": 17,
+            "weight": "medium",
+            "monospaced": true
+          }
+        }
+      ]
+    }
+  }
+}

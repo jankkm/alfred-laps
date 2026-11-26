@@ -1,0 +1,10 @@
+[
+  {
+    "triggers": "preload",
+    "action": { "type": "script", "src": "scripts/laps", "args": "init" }
+  },
+  {
+    "triggers": "launched",
+    "action": { "type": "script", "src": "scripts/laps", "args": "launch", "async": true }
+  }
+]

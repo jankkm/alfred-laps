@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  LAPS_CLI_VERSION: "0.9.0"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download laps-cli and build universal binary
+        run: |
+          set -euo pipefail
+          v="$LAPS_CLI_VERSION"
+          base="https://github.com/jankkm/laps-cli/releases/download/v$v"
+          work="$(mktemp -d)"
+          curl -fsSL "$base/SHA256SUMS" -o "$work/SHA256SUMS"
+          for arch in arm64 amd64; do
+            f="laps-cli-$v-darwin-$arch.tar.gz"
+            curl -fsSL "$base/$f" -o "$work/$f"
+            (cd "$work" && grep -F "  $f" SHA256SUMS | shasum -a 256 -c -)
+            mkdir -p "$work/$arch" && tar -xzf "$work/$f" -C "$work/$arch"
+          done
+          lipo -create \
+            "$(find "$work/arm64" -type f -name laps-cli | head -1)" \
+            "$(find "$work/amd64" -type f -name laps-cli | head -1)" \
+            -output laps-cli
+          chmod +x laps-cli
+          lipo -info laps-cli
+          ./laps-cli --version
+
+      - name: Set workflow version from tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          plutil -replace version -string "$version" info.plist
+          plutil -lint info.plist
+
+      - name: Validate UI JSON
+        run: |
+          for f in laps.alfredui/ui.json laps.alfredui/components/*.json; do
+            python3 -m json.tool "$f" > /dev/null
+          done
+
+      - name: Package
+        run: |
+          out="Alfred-LAPS-${GITHUB_REF_NAME}.alfredworkflow"
+          zip -r -X "$out" info.plist icon.png laps-cli laps.alfredui -x '*.DS_Store'
+          unzip -l "$out"
+          echo "ASSET=$out" >> "$GITHUB_ENV"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "$ASSET" \
+            --title "Alfred LAPS ${GITHUB_REF_NAME}" \
+            --generate-notes \
+            --verify-tag
