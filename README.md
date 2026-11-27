@@ -34,6 +34,19 @@ It uses Alfred 6's native **Alfred UI**: results show up inside Alfred's own win
 
 Requirements: Alfred 6 with Powerpack, on macOS (Apple silicon or Intel). Your account needs read access to the LAPS attributes. Encrypted Windows LAPS passwords also require membership in the decryption group, which is *Domain Admins* by default.
 
+### If macOS blocks `laps-cli`
+
+The workflow includes a command-line tool that is not yet signed and notarized with Apple. On first use, macOS may show **“laps-cli” Not Opened** and say it cannot verify the tool is free of malware. Because Alfred launches it in the background, **Open Anyway** may not appear in System Settings.
+
+If you downloaded the workflow from a release you trust, you can allow just this bundled tool:
+
+1. Click **Done** in the warning (not **Move to Trash**).
+2. In Alfred Preferences, right-click **Alfred LAPS** and choose **Open in Finder**.
+3. Open Terminal and type `xattr -d com.apple.quarantine ` (including the space at the end). Drag the **`laps-cli`** file from the workflow folder into Terminal, then press Return.
+4. Try `laps` again.
+
+This removes the download quarantine flag from **that file only**; it does not verify the tool or disable macOS security globally. Don't do this for a download you don't trust.
+
 ## Usage
 
 | Input | |
